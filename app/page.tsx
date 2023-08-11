@@ -1,6 +1,7 @@
 "use client";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -13,7 +14,7 @@ export default function Home() {
     }
   });
   return (
-    <main className="flex h-screen w-full justify-center items-center flex-col gap-4">
+    <main className="flex h-screen w-full p-10 justify-center items-center flex-col gap-4">
       <h1>Logged in </h1>
       <button
         onClick={() => signOut()}

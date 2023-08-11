@@ -2,6 +2,7 @@
 import { queryClientOptions } from "@/libs/queryClientOptions";
 import React, { ReactNode, useState } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 interface ProviderProps {
   children: ReactNode;
@@ -10,7 +11,10 @@ interface ProviderProps {
 const QueryProvider = ({ children }: ProviderProps) => {
   const [queryClient] = useState(() => new QueryClient());
   return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
+    </QueryClientProvider>
   );
 };
 

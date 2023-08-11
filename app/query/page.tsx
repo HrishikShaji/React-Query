@@ -1,14 +1,21 @@
 "use client";
+import { useUsers } from "@/hooks/useUsers";
+import { useRouter } from "next/navigation";
 import React from "react";
+import { Toaster, toast } from "react-hot-toast";
 import { useQuery } from "react-query";
 
+type User = {
+  id: string;
+  name: string;
+  email: string;
+};
+
 const page = () => {
-  const { isLoading, data, isError, error } = useQuery("users", async () => {
-    return await fetch("/api/users", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }).then((response) => response.json());
-  });
+  const { isLoading, data, isError, error, isFetching, refetch } = useUsers();
+
+  const router = useRouter();
+  console.log(data);
 
   if (isLoading) {
     return <h1>Loading...</h1>;
@@ -18,16 +25,25 @@ const page = () => {
     return <h2>{(error as any).message}</h2>;
   }
 
-  console.log(data);
+  console.log(isLoading, isFetching);
 
   return (
-    <div>
-      {data?.map((user: any) => (
-        <div key={user.id}>
-          <h1>{user.name}</h1>
-        </div>
-      ))}
-    </div>
+    <>
+      <Toaster />
+      <div className="p-10 flex flex-col gap-4">
+        <button onClick={() => refetch()}>Fetch Users</button>
+        {data?.map((user: User) => (
+          <div key={user.id}>
+            <div
+              onClick={() => router.push(`/users/${user.id}`)}
+              className="flex w-full cursor-pointer justify-between text-left">
+              <h1>{user.name}</h1>
+              <h2>{user.email}</h2>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 };
 
