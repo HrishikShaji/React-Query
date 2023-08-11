@@ -1,9 +1,10 @@
 "use client";
+import { fetchUser } from "@/hooks/useUser";
 import { useUsers } from "@/hooks/useUsers";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { Toaster, toast } from "react-hot-toast";
-import { useQuery } from "react-query";
+import { useQueries, useQuery } from "react-query";
 
 type User = {
   id: string;
@@ -14,8 +15,16 @@ type User = {
 const page = () => {
   const { isLoading, data, isError, error, isFetching, refetch } = useUsers();
 
+  const userResults = useQueries(
+    data?.map((user: User) => {
+      return {
+        queryKey: ["user", user.id],
+        queryFn: () => fetchUser(user.id),
+      };
+    }) || []
+  );
   const router = useRouter();
-  console.log(data);
+  console.log(userResults);
 
   if (isLoading) {
     return <h1>Loading...</h1>;

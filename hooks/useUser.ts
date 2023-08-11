@@ -1,6 +1,6 @@
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 
-const fetchUser = async (userId: string) => {
+export const fetchUser = async (userId: string) => {
   return await fetch(`/api/users/${userId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -8,5 +8,21 @@ const fetchUser = async (userId: string) => {
 };
 
 export const useUser = (userId: string) => {
-  return useQuery(["user", userId], () => fetchUser(userId));
+  const queryClient = useQueryClient();
+  return useQuery(["user", userId], () => fetchUser(userId), {
+    initialData: () => {
+      const users = queryClient.getQueryData("users") as unknown;
+
+      if (Array.isArray(users)) {
+        const user = users.find((user) => user.id === parseInt(userId));
+        if (user) {
+          return {
+            data: user,
+          };
+        }
+      } else {
+        return undefined;
+      }
+    },
+  });
 };
